@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle of Taling Chan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen" class="screen">
+            <h1>🎴 Battle of Taling Chan</h1>
+            <p>เกมการ์ดต่อสู้ 1v1</p>
+            <input type="text" id="username-input" placeholder="ใส่ชื่อผู้เล่น" maxlength="20">
+            <button id="join-button">เข้าสู่เกม</button>
+        </div>
+
+        <!-- LOBBY MENU -->
+        <div id="lobby-menu" class="screen" style="display: none;">
+            <h2>🏠 Lobby</h2>
+            <div id="player-list"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="show-join-screen-button">🔍 เข้าร่วมห้อง</button>
+                <button id="show-create-screen-button">➕ สร้างห้องใหม่</button>
+                <button id="tutorial-button">📖 วิธีการเล่น</button>
+            </div>
+        </div>
+
+        <!-- JOIN ROOM SCREEN -->
+        <div id="join-room-screen" class="screen" style="display: none;">
+            <h2>🔍 เลือกห้อง</h2>
+            <ul id="room-list" style="list-style: none; padding: 0; min-width: 300px;"></ul>
+            <button class="back-button">← กลับ</button>
+        </div>
+
+        <!-- CREATE ROOM SCREEN -->
+        <div id="create-room-screen" class="screen" style="display: none;">
+            <h2>➕ สร้างห้อง</h2>
+            <input type="text" id="roomname-input" placeholder="ชื่อห้อง" maxlength="30">
+            <button id="create-room-button">สร้าง</button>
+            <button class="back-button">← กลับ</button>
+        </div>
+
+        <!-- WAITING ROOM -->
+        <div id="waiting-room-screen" class="screen" style="display: none;">
+            <h2 id="waiting-room-name">รอผู้เล่น...</h2>
+            <div id="waiting-player-list" style="min-height: 100px;"></div>
+            <div style="margin: 20px 0;">
+                <label for="deck-select">เลือกเด็ค:</label>
+                <select id="deck-select">
+                    <option value="starter_pasulol">Starter - พะสุลอล</option>
+                </select>
+            </div>
+            <button id="ready-button">✅ พร้อม</button>
+            <button class="back-button">← กลับ</button>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="game-screen" class="game-board" style="display: none;">
+            
+            <!-- Hand P2 -->
+            <div class="grid-zone opp-hand hand-zone">
+                <span class="zone-name">Hand P2</span>
+                <div id="opponent-hand"></div>
+            </div>
+            
+            <!-- Life P2 -->
+            <div class="grid-zone opp-life">
+                <span class="zone-name">Life P2</span>
+                <div id="opponent-life-zone"></div>
+            </div>
+            
+            <!-- Deck P2 -->
+            <div class="grid-zone opp-deck deck-zone">
+                <span class="zone-name">Deck P2</span>
+                <div id="opponent-deck-zone"></div>
+            </div>
+            
+            <!-- Magic P2 -->
+            <div class="grid-zone opp-magic magic-zone">
+                <span class="zone-name">Magic P2</span>
+                <div id="opponent-magic-zone"></div>
+            </div>
+            
+            <!-- Hell P2 -->
+            <div class="grid-zone opp-grave graveyard-zone">
+                <span class="zone-name">Hell P2</span>
+                <div id="opponent-graveyard-zone"></div>
+            </div>
+            
+            <!-- Avatar P2 -->
+            <div class="grid-zone opp-avatar avatar-zone">
+                <span class="zone-name">Avatar P2</span>
+                <div id="opponent-avatar-zone"></div>
+            </div>
+            
+            <!-- CENTER ROW (Construct P2 + Land + Construct P1) -->
+            <div class="center-row">
+                <!-- Construct P2 -->
+                <div class="grid-zone opp-construct construct-zone">
+                    <span class="zone-name">Construct P2</span>
+                    <div id="opponent-construct-zone"></div>
+                </div>
+                
+                <!-- Land Zone (ตรงกลาง) -->
+                <div class="grid-zone land land-zone">
+                    <span class="zone-name">Land</span>
+                    <div id="land-zone"></div>
+                </div>
+                
+                <!-- Construct P1 -->
+                <div class="grid-zone self-construct construct-zone">
+                    <span class="zone-name">Construct P1</span>
+                    <div id="my-construct-zone"></div>
+                </div>
+            </div>
+            
+            <!-- Life P1 -->
+            <div class="grid-zone self-life">
+                <span class="zone-name">Life P1</span>
+                <div id="my-life-zone"></div>
+            </div>
+            
+            <!-- Avatar P1 -->
+            <div class="grid-zone self-avatar avatar-zone">
+                <span class="zone-name">Avatar P1</span>
+                <div id="my-avatar-zone"></div>
+            </div>
+            
+            <!-- Hell P1 -->
+            <div class="grid-zone self-grave graveyard-zone">
+                <span class="zone-name">Hell P1</span>
+                <div id="my-graveyard-zone"></div>
+            </div>
+            
+            <!-- Magic P1 -->
+            <div class="grid-zone self-magic magic-zone">
+                <span class="zone-name">Magic P1</span>
+                <div id="my-magic-zone"></div>
+            </div>
+            
+            <!-- Deck P1 -->
+            <div class="grid-zone self-deck deck-zone">
+                <span class="zone-name">Deck P1</span>
+                <div id="my-deck-zone"></div>
+            </div>
+            
+            <!-- Hand P1 -->
+            <div class="grid-zone self-hand hand-zone">
+                <span class="zone-name">Hand P1</span>
+                <div id="my-hand"></div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="bottom-bar">
+                <div class="opp-info">
+                    <strong id="opponent-name">Opponent</strong>
+                    <span>🎯 Turn <span id="opponent-turn">0</span></span>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div id="turn-status">รอเริ่มเกม...</div>
+                    <div id="action-prompt"></div>
+                    <button id="end-turn-button" disabled>จบเทิร์น</button>
+                </div>
+                
+                <div class="self-info">
+                    <strong id="my-name">You</strong>
+                    <span>🎯 Turn <span id="my-turn">0</span></span>
+                </div>
+            </div>
+            
+            <!-- Game Log -->
+            <div id="game-log">
+                <p style="color: #666;">[System] รอเริ่มเกม... | 💡 คลิกซ้ายเลือก Action | คลิกขวาดูรายละเอียด</p>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <!-- CARD PREVIEW MODAL -->
+    <div id="card-preview-modal">
+        <div class="card-preview-content">
+            <button id="close-card-preview" class="card-preview-close">×</button>
+            
+            <div class="card-preview-header">
+                <div class="card-preview-name" id="preview-card-name">ชื่อการ์ด</div>
+                <div class="card-preview-type" id="preview-card-type">ประเภท</div>
+            </div>
+            
+            <div class="card-preview-stats">
+                <div class="card-preview-stat">
+                    <div class="card-preview-stat-label">💎 Cost</div>
+                    <div class="card-preview-stat-value" id="preview-card-cost">0</div>
+                </div>
+                <div class="card-preview-stat">
+                    <div class="card-preview-stat-label">💠 Gem</div>
+                    <div class="card-preview-stat-value" id="preview-card-gem">0</div>
+                </div>
+                <div class="card-preview-stat">
+                    <div class="card-preview-stat-label">⚔️ Power</div>
+                    <div class="card-preview-stat-value" id="preview-card-power">0</div>
+                </div>
+                <div class="card-preview-stat">
+                    <div class="card-preview-stat-label">🏷️ Tribe</div>
+                    <div class="card-preview-stat-value" id="preview-card-tribe">-</div>
+                </div>
+            </div>
+            
+            <div class="card-preview-description">
+                <p id="preview-card-description">คำอธิบาย</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TUTORIAL MODAL -->
+    <div id="tutorial-modal">
+        <div class="tutorial-content">
+            <button id="close-tutorial" class="tutorial-close">×</button>
+            <h2>📖 วิธีการเล่น Battle of Taling Chan</h2>
+            
+            <div class="tutorial-section">
+                <h3>🎯 เป้าหมายของเกม</h3>
+                <p>ชนะโดยการ <span class="tutorial-highlight">เปิด Life Cards ของฝ่ายตรงข้ามครบ 5 ใบ</span> หรือทำให้คู่ต่อสู้ <span class="tutorial-highlight">เด็คหมด</span></p>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>🃏 ประเภทการ์ด</h3>
+                <ul>
+                    <li><strong>⚔️ Avatar:</strong> การ์ดตัวละครที่สามารถโจมตีได้ มี Power บอกความแข็งแกร่ง</li>
+                    <li><strong>✨ Magic:</strong> การ์ดเวทย์มนต์ 3 ประเภท:
+                        <ul>
+                            <li><strong>Normal:</strong> ใช้ทันที (1 ครั้ง/เทิร์น)</li>
+                            <li><strong>Mod:</strong> ติดกับ Avatar เพิ่มความสามารถ (1 ครั้ง/เทิร์น)</li>
+                            <li><strong>Land:</strong> วางบนกระดาน ให้เอฟเฟกต์ถาวร (1 ครั้ง/เทิร์น)</li>
+                        </ul>
+                    </li>
+                    <li><strong>🏗️ Construct:</strong> การ์ดสิ่งปลูกสร้าง ไม่สามารถโจมตีได้แต่มี Power ป้องกัน</li>
+                    <li><strong>❤️ Life Cards:</strong> การ์ดชีวิต 5 ใบ เปิดเมื่อถูกโจมตีและให้เอฟเฟกต์พิเศษ</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>💎 ระบบ Gem (การจ่ายค่า Cost)</h3>
+                <ul>
+                    <li><span class="tutorial-highlight">ไม่มีพลังงานสะสม!</span> จ่ายโดย <strong>ทิ้งการ์ดจากมือ</strong></li>
+                    <li>ต้องการเล่นการ์ด Cost 4 = <strong>ทิ้งการ์ดที่รวม Gem Value ≥ 4</strong></li>
+                    <li>ตัวอย่าง: ทิ้งการ์ด 2 ใบ (Gem 3+2=5) → เล่นการ์ด Cost 4 ได้</li>
+                    <li>⚠️ <strong>ส่วนเกิน (5-4=1) หายไป ไม่เก็บไว้</strong></li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>🎮 การเล่นแต่ละเทิร์น</h3>
+                <ul>
+                    <li><strong>1. เริ่มเทิร์น:</strong> จั่วการ์ด 1 ใบ (ถ้ามือน้อยกว่า 3 ใบ จั่วจนครบ 3)</li>
+                    <li><strong>2. Main Phase:</strong> ทำได้หลายอย่างตามต้องการ:
+                        <ul>
+                            <li><strong>คลิกซ้ายที่การ์ด</strong> → เลือก Action (เล่น/โจมตี/ใช้สำแดง)</li>
+                            <li>เล่นการ์ด Avatar/Magic/Construct</li>
+                            <li>ใช้ความสามารถพิเศษ (จุติ, สำแดง)</li>
+                            <li>ประกาศโจมตี Avatar/Life</li>
+                        </ul>
+                    </li>
+                    <li><strong>3. จบเทิร์น:</strong> กดปุ่ม "จบเทิร์น"</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>⚔️ ระบบการต่อสู้</h3>
+                <ul>
+                    <li>Avatar สามารถโจมตี Avatar หรือ Life ของฝ่ายตรงข้าม</li>
+                    <li><strong>การต่อสู้ระหว่าง Avatar:</strong>
+                        <ul>
+                            <li>Power สูงกว่า = ชนะ (ฝ่ายแพ้ลงนรก)</li>
+                            <li>Power เท่ากัน = ทั้งคู่ตาย</li>
+                        </ul>
+                    </li>
+                    <li><strong>โจมตี Life:</strong> ต้องไม่มี Avatar ของฝ่ายตรงข้าม (เว้นแต่มีความสามารถพิเศษ "เตะไข่")</li>
+                    <li><strong>Construct:</strong> ต้องชนะ Avatar ทั้งหมดก่อนถึงจะโจมตี Construct ได้</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>✨ ความสามารถพิเศษ</h3>
+                <ul>
+                    <li><strong>จุติ (Summon):</strong> เกิดขึ้นทันทีเมื่ออัญเชิญการ์ดโดยจ่าย Cost</li>
+                    <li><strong>สำแดง (Reveal):</strong> ใช้ด้วยการหมุนการ์ด (Tap) ใช้ได้ครั้งละ 1 ครั้งต่อเทิร์น</li>
+                    <li><strong>เตะไข่:</strong> โจมตี Life ได้โดยตรงแม้มี Avatar ป้องกัน</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>📋 กฎสำคัญ</h3>
+                <ul>
+                    <li>เทิร์นแรก: <span class="tutorial-highlight">ผู้เล่นคนแรกโจมตีไม่ได้</span></li>
+                    <li>Avatar สูงสุดบนสนาม: <span class="tutorial-highlight">4 ใบ</span></li>
+                    <li>มือเริ่มต้น: <span class="tutorial-highlight">5 ใบ</span> (มี Mulligan เปลี่ยนการ์ดได้)</li>
+                    <li>Magic แต่ละประเภทใช้ได้ <span class="tutorial-highlight">1 ครั้งต่อเทิร์น</span></li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>💡 เคล็ดลับสำหรับมือใหม่</h3>
+                <ul>
+                    <li><strong>คลิกซ้าย</strong> ที่การ์ดเพื่อเลือก Action</li>
+                    <li><strong>คลิกขวา</strong> ที่การ์ดเพื่อดูรายละเอียดเต็ม</li>
+                    <li>จัดการมือให้ดี: เก็บการ์ดที่มี Gem Value สูงไว้เป็น "แบตเตอรี่"</li>
+                    <li>อย่าเล่น Avatar ออกทั้งหมดในเทิร์นแรก</li>
+                    <li>ใช้ Magic Mod กับ Avatar ที่สำคัญ</li>
+                    <li>ระวัง! ฝ่ายตรงข้ามสามารถใช้ "สำแดง" ตอบโต้ขณะคุณโจมตี</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h3>🎲 การเริ่มเกม</h3>
+                <ol>
+                    <li>ทอยเต๋าตัดสินว่าใครได้เทิร์นแรก (ทอยสูงกว่าชนะ)</li>
+                    <li>Mulligan: เลือกการ์ดที่ต้องการเปลี่ยน (คลิกเพื่อเลือก แล้วกด "ยืนยัน")</li>
+                    <li>เริ่มเกม! ผู้เล่นคนแรกเริ่มเทิร์น</li>
+                </ol>
+            </div>
+
+            <div class="tutorial-section" style="background: rgba(102, 126, 234, 0.1); border-left-color: #ffd700;">
+                <h3>🏆 ขอให้สนุกกับการเล่น!</h3>
+                <p style="text-align: center; font-size: 1.1em;">
+                    หากมีข้อสงสัย ลองเล่นไปก่อน<br>
+                    <strong style="color: #667eea;">Battle of Taling Chan</strong> รอคุณอยู่!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>

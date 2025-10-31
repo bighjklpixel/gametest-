@@ -1,0 +1,655 @@
+/* File: client/css/style.css - Complete with Action Menu */
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Kanit", sans-serif; }
+html, body { height: 100%; width: 100%; overflow: hidden; }
+body { background: #0a0a0a; color: #fff; }
+
+.app-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+}
+
+.screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; padding: 20px; }
+.screen h1 { font-size: 2.5em; margin-bottom: 20px; }
+.screen h2 { font-size: 1.8em; margin-bottom: 15px; }
+
+input, select, button { border: none; border-radius: 8px; padding: 12px 20px; font-size: 16px; margin: 8px; outline: none; }
+input, select { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
+button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; font-weight: 600; }
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+button:disabled { background: #444; cursor: not-allowed; opacity: 0.5; box-shadow: none; }
+
+/* ===== CARD STYLES ===== */
+.card { 
+    width: 65px; 
+    height: 91px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6); 
+    transition: transform 0.2s, box-shadow 0.2s; 
+    cursor: pointer; 
+    position: relative; 
+    flex-shrink: 0; 
+    background-color: #1a1a2a; 
+    background-size: cover; 
+    background-position: center; 
+    border: 2px solid #444; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between;
+    padding: 2px; 
+    font-size: 0.55em; 
+    text-align: center; 
+    color: #fff; 
+    overflow: hidden;
+}
+
+.hand-zone .card:hover { transform: translateY(-18px) scale(1.1); z-index: 100; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.8); }
+.avatar-zone .card:hover, .magic-zone .card:hover, .construct-zone .card:hover { transform: scale(1.08); z-index: 50; }
+.card.tapped { transform: rotate(90deg) scale(0.85); }
+.card.card-back { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); background-image: url('../images/card_back.jpg'); background-size: cover; color: transparent; font-size: 0; }
+.card.selected { transform: translateY(-18px) scale(1.1); box-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff; border: 2px solid #00ffff; }
+
+/* ===== Card Selection for Payment ===== */
+.card.payment-selected {
+    border: 3px solid #f39c12 !important;
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.8) !important;
+    transform: translateY(-10px) scale(1.05) !important;
+}
+
+.game-board {
+    display: grid;
+    height: 96vh;
+    width: 98vw;
+    padding: 4px;
+    background: #0a0a0a;
+    
+    grid-template-columns: 90px 1fr 90px;
+    
+    grid-template-rows: 
+        70px                 
+        minmax(75px, 0.9fr)  
+        minmax(95px, 1.1fr)  
+        65px                 
+        minmax(95px, 1.1fr)  
+        minmax(75px, 0.9fr)  
+        70px                 
+        42px                 
+        55px;                
+    
+    grid-template-areas:
+        ".       handP2   lifeP2"
+        "deckP2  magicP2  lifeP2"
+        "hellP2  avatarP2 lifeP2"
+        "hellP2  center   lifeP2"
+        "lifeP1  avatarP1 hellP1"
+        "lifeP1  magicP1  deckP1"
+        "lifeP1  handP1   deckP1"
+        "bottom  bottom   bottom"
+        "log     log      log";
+        
+    gap: 3px;
+}
+
+.center-row {
+    grid-area: center;
+    display: grid;
+    grid-template-columns: 1fr 90px 1fr;
+    gap: 3px;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.grid-zone { 
+    border: 2px solid rgba(102, 126, 234, 0.3); 
+    border-radius: 7px; 
+    background: rgba(10, 10, 20, 0.6); 
+    backdrop-filter: blur(10px);
+    padding: 4px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    position: relative; 
+    min-height: 0; 
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+.grid-zone:hover { border-color: rgba(102, 126, 234, 0.6); }
+
+.opp-hand { grid-area: handP2; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+.opp-deck { grid-area: deckP2; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); }
+.opp-magic { grid-area: magicP2; background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+.opp-grave { grid-area: hellP2; grid-row: 3 / 5; background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%); }
+.opp-avatar { grid-area: avatarP2; background: linear-gradient(135deg, #27ae60 0%, #16a085 100%); }
+.opp-life { grid-area: lifeP2; grid-row: 1 / 4; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+
+.opp-construct { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+.land { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border: 3px solid #f1c40f; box-shadow: 0 0 15px rgba(243, 156, 18, 0.4); }
+.self-construct { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+
+.self-life { grid-area: lifeP1; grid-row: 5 / 8; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+.self-avatar { grid-area: avatarP1; background: linear-gradient(135deg, #27ae60 0%, #16a085 100%); }
+.self-magic { grid-area: magicP1; background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+.self-grave { grid-area: hellP1; grid-row: 5 / 7; background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%); }
+.self-deck { grid-area: deckP1; grid-row: 6 / 8; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); }
+.self-hand { grid-area: handP1; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+
+.bottom-bar { grid-area: bottom; }
+#game-log { grid-area: log; }
+
+.zone-name {
+    position: absolute; top: 3px; left: 3px; font-size: 0.55em;
+    color: rgba(255,255,255,0.7); pointer-events: none; z-index: 10;
+    background: rgba(0,0,0,0.6); padding: 1px 4px; border-radius: 2px;
+    font-weight: 600; letter-spacing: 0.2px;
+}
+
+.opp-deck .zone-name, .opp-grave .zone-name, .opp-magic .zone-name, 
+.opp-avatar .zone-name, .opp-construct .zone-name, .opp-hand .zone-name {
+    transform: rotate(180deg); top: auto; bottom: 3px; right: 3px; left: auto;
+}
+
+/* ===== ZONE LAYOUTS ===== */
+
+/* Life Zones - การ์ดหมุน 90° แถวตั้ง */
+.opp-life, .self-life { 
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start; 
+    align-items: center;
+    gap: 2px; 
+    padding: 4px;
+    flex-wrap: nowrap !important;
+}
+
+.self-life { justify-content: flex-end; }
+.opp-life { justify-content: flex-start; }
+
+/* Hand Zones - แนวนอน */
+.hand-zone {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center; 
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 5px;
+    gap: 4px;
+    flex-wrap: nowrap;
+}
+
+.hand-zone::-webkit-scrollbar {
+    height: 4px;
+}
+
+.hand-zone::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 2px;
+}
+
+.opp-hand { 
+    transform: rotate(180deg); 
+}
+
+.hand-zone .card {
+    display: inline-block;
+}
+
+.avatar-zone, .magic-zone { 
+    padding: 5px; 
+    gap: 5px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-content: flex-start; 
+}
+
+.construct-zone { 
+    padding: 4px; 
+    gap: 4px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-content: flex-start; 
+}
+
+.land-zone {
+    padding: 3px !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.land-zone .zone-name {
+    font-size: 0.48em !important;
+    padding: 1px 3px !important;
+}
+
+.deck-zone, .graveyard-zone { 
+    flex-direction: column; 
+    padding: 5px; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    font-size: 0.65em;
+    color: #ecf0f1; 
+    font-weight: 600;
+}
+
+.opp-deck, .opp-grave { 
+    transform: rotate(180deg); 
+}
+
+/* ===== LIFE CARDS - หมุน 90° ===== */
+.card.life-card-slot { 
+    width: 73px;
+    height: 52px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    border: 2px solid #666; 
+    background: linear-gradient(135deg, #2a2a40 0%, #1a1a30 100%);
+    font-size: 0.5em; 
+    color: #bbb; 
+    border-radius: 4px; 
+    flex-shrink: 0; 
+    margin: 0;
+    transform: rotate(90deg);
+}
+
+.life-card-slot.card-back { 
+    background-image: url('../images/card_back.jpg'); 
+    color: transparent; 
+    font-size: 0; 
+}
+
+.bottom-bar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    background: rgba(10, 10, 20, 0.9); 
+    padding: 4px 8px; 
+    border-radius: 6px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.opp-info, .self-info { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    gap: 1px; 
+    color: #ecf0f1; 
+    font-size: 0.7em;
+}
+
+.opp-info strong, .self-info strong { 
+    font-size: 0.85em; 
+    color: #667eea; 
+}
+
+#turn-status { 
+    font-size: 0.75em; 
+    color: #ffd700; 
+    margin-bottom: 2px; 
+    font-weight: bold; 
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); 
+}
+
+#action-prompt { 
+    display: flex; 
+    gap: 4px; 
+    justify-content: center; 
+    align-items: center; 
+    margin: 1px 0; 
+}
+
+#game-log {
+    height: 55px; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+    background: rgba(10, 10, 20, 0.8); 
+    border-radius: 6px; 
+    padding: 4px;
+    font-size: 0.6em; 
+    color: #95a5a6; 
+    border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+#game-log p { 
+    margin: 1px 0; 
+    padding: 1px 2px; 
+    border-radius: 2px; 
+}
+
+@media (max-width: 1400px) {
+    .game-board { grid-template-columns: 80px 1fr 80px; }
+    .card { width: 55px; height: 77px; }
+    .card.life-card-slot { width: 63px; height: 45px; }
+}
+
+/* ===== CARD PREVIEW MODAL ===== */
+#card-preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+#card-preview-modal.active {
+    display: flex;
+}
+
+.card-preview-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 3px solid #667eea;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.6);
+    position: relative;
+}
+
+.card-preview-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2em;
+    color: #fff;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    transition: transform 0.2s;
+}
+
+.card-preview-close:hover {
+    transform: scale(1.2);
+    color: #ff6b6b;
+}
+
+.card-preview-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.card-preview-name {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.card-preview-type {
+    font-size: 1.1em;
+    color: #95a5a6;
+}
+
+.card-preview-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.card-preview-stat {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.card-preview-stat-label {
+    font-size: 0.9em;
+    color: #95a5a6;
+    margin-bottom: 5px;
+}
+
+.card-preview-stat-value {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.card-preview-description {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+    margin-top: 20px;
+}
+
+.card-preview-description p {
+    line-height: 1.6;
+    color: #ecf0f1;
+}
+
+/* ===== TUTORIAL MODAL ===== */
+#tutorial-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+#tutorial-modal.active {
+    display: block;
+}
+
+.tutorial-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.tutorial-close {
+    float: right;
+    font-size: 2em;
+    color: #fff;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: -10px 0 0 0;
+}
+
+.tutorial-close:hover {
+    color: #ff6b6b;
+}
+
+.tutorial-content h2 {
+    color: #667eea;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2.2em;
+}
+
+.tutorial-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.tutorial-section h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.tutorial-section p, .tutorial-section ul, .tutorial-section ol {
+    line-height: 1.8;
+    color: #ecf0f1;
+    margin-bottom: 10px;
+}
+
+.tutorial-section ul, .tutorial-section ol {
+    padding-left: 25px;
+}
+
+.tutorial-section li {
+    margin-bottom: 8px;
+}
+
+.tutorial-highlight {
+    color: #f39c12;
+    font-weight: 600;
+}
+
+/* ===== ACTION MENU ===== */
+#action-menu {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 3px solid #667eea;
+    border-radius: 15px;
+    padding: 25px;
+    z-index: 9998;
+    min-width: 350px;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.6);
+    animation: modalSlideIn 0.2s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+}
+
+#action-menu.active {
+    display: block;
+}
+
+#action-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9997;
+}
+
+#action-menu-overlay.active {
+    display: block;
+}
+
+.action-menu-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.action-menu-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.action-menu-subtitle {
+    font-size: 0.9em;
+    color: #95a5a6;
+}
+
+.action-menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-menu-button {
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.action-menu-button.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.action-menu-button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.action-menu-button.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ecf0f1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.action-menu-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.action-menu-button.danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.action-menu-button.danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.action-menu-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #444;
+}
+
+/* Payment Info UI */
+.payment-info {
+    background: rgba(243, 156, 18, 0.2);
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.payment-info-text {
+    color: #f39c12;
+    font-weight: 600;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
